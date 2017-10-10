@@ -8,11 +8,18 @@ function getUsers(req, res) {
                 messaje : 'Error at users'
             })
         }
-        console.log(users.size);
-        res.status(200)
-        res.send({
-            users
-        })
+        if(users.length <= 0) {
+            res.status(200)
+            res.send({
+                messaje : 'No users found'
+            })
+        }
+        else {
+            res.status(200)
+            res.send({
+                users
+            })
+        }
     })
 }
 
