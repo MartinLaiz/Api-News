@@ -2,6 +2,9 @@ const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
 const port = process.env.PORT || 3000
+var user = require('./models/user')
+var notice = require('./models/notice')
+var category = require('./models/category')
 
 mongoose.connect('mongodb://apiadi:apiadi@ds113925.mlab.com:13925/newsapp',{useMongoClient : true})
 
