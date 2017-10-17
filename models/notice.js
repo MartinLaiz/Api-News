@@ -17,8 +17,7 @@ var noticeSchema = new mongoose.Schema({
     },
     views : Number,
     keywords : [{
-        keyword : String,
-
+        keyword : String
     }],
     comments : [{
         comment : String,
