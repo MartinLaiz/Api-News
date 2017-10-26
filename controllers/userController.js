@@ -2,29 +2,14 @@ const User = require('../models/user');
 
 function getUsers(req, res) {
     User.find({},function(err, users) {
-        if(err) {
-            res.status(500)
-            return res.send({
-                messaje : 'Error at users'
-            })
-        }
-        if(users.length <= 0) {
-            res.status(200)
-            res.send({
-                messaje : 'No users found'
-            })
-        }
-        else {
-            res.status(200)
-            res.send({
-                users
-            })
-        }
+        if(err) res.status(500).send({ messaje : 'Error at users' })
+        else if(users.length == 0) res.status(200).send({ messaje : 'No exist users' })
+        else res.status(200).send(users)
     })
 }
 
 function createUser(req, res) {
-    User.find({ username: req.body.username }, function(err, user) {
+    User.findOne({ username: req.body.username }, function(err, user) {
         if(err) res.status(400).send({ messaje: 'Error finding user' })
         if(user) res.status(400).send({ messaje: 'User already exist' })
         else {
@@ -45,8 +30,7 @@ function getUser(req, res) {
 }
 
 function updateUser(req, res) {
-    console.log(req.body);
-    User.findOneAndUpdate({ _id:req.params.id }, {$set: req.body}, {new: true}, function(err, user){
+    User.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true}, function(err, user){
         if(err) res.status(400).send({ messaje: 'Error finding user'})
         else if(!user) res.status(404).send({ messaje: 'User not found'})
         else res.status(200).send(user)
@@ -54,7 +38,11 @@ function updateUser(req, res) {
 }
 
 function removeUser(req, res) {
-
+    User.findByIdAndRemove(req.params.id, function (err, user) {
+        if(err) res.status(400).send({ messaje: 'Error finding user'})
+        else if(!user) res.status(404).send({ messaje: 'User not found'})
+        else res.status(200).send({ messaje: "Deleted user "+user.username })
+    })
 }
 
 module.exports = {
