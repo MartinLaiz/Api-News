@@ -1,5 +1,9 @@
 
-function getTwitter(req, res) {
+
+const consumerKey = '7qQS44zHRwk1fNZsS2Y4cAspR'
+const consumerSecret = 'kmID1HvhpWAsAXGl9LCgoPJpfGIdqpPJ0qL4ZRs8fziEbSqLAM'
+
+function shareTwitter(req, res) {
     Twitter.find({},function(err, tweets) {
         if(err) {
             res.status(500)
@@ -22,7 +26,11 @@ function getTwitter(req, res) {
     })
 }
 
+function getNoticesTwitter(req, res) {
+
+}
 
 module.exports = {
-    getTwitter
+    shareTwitter,
+    getNoticesTwitter
 }
