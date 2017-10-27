@@ -7,19 +7,13 @@ var noticeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref : 'User'
     },
-    category : {
-        type: mongoose.Schema.Types.ObjectId,
-        ref : 'Category'
-    },
+    category : String,
     publishdate : {
         type : Date,
         default : Date.now
     },
     views : Number,
-    keywords : [{
-        keyword : String,
-
-    }],
+    keywords : String,
     comments : [{
         comment : String,
         user : {
