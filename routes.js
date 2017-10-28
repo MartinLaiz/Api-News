@@ -23,8 +23,8 @@ routes.post('/notices', noticeController.createNotice)
 routes.get('/notices/:id', noticeController.getNotice)
 routes.put('/notices/:id', noticeController.updateNotice)
 routes.delete('/notices/:id', noticeController.removeNotice)
-
+/*
 routes.get('/notices/:id/share', twitterController.shareTwitter)
 routes.get('/notices/:id/search', twitterController.getNoticesTwitter)
-
+*/
 module.exports = routes;
