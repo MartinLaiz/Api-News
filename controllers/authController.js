@@ -14,44 +14,44 @@ function createToken(user) {
 }
 
 function verifyToken(auth) {
+    var response = {}
     if(!auth) {
-        return {
+        response = {
             id: null,
             messaje: 'No authorization header'
         }
     }
 
-    var token = auth.split(" ")[1];
-    var payload = jwt.decode(token, secret_token);
+    var payload = jwt.decode(auth, secret_token);
 
     if(payload.exp <= moment().unix()) {
-        return {
+        response = {
             id: null,
             messaje: 'Token expired'
         }
     }
-
-    return User.findOne({ _id: payload.sub}, function(err, user) {
+    User.findById({ _id: payload.sub}, function(err, user) {
+        console.log(payload.sub);
         if(err) {
-            return {
+            response = {
                 id: null,
                 messaje: 'Error getting user auth'
             }
         }
         else if(!user) {
-            return {
+            response = {
                 id: null,
                 messaje: 'No exist user auth'
             }
         }
         else {
-            console.log(user._id);
-            return {
+            response = {
                 id: user._id,
                 messaje: 'Correct token'
             }
         }
     })
+    return response
 }
 
 module.exports = {

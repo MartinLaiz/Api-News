@@ -9,7 +9,7 @@ var twitterController = require('./controllers/twitterController')
 
 routes.get('/', homeController.getHome)
 
-routes.get('/login', userController.login)
+routes.put('/login', userController.login)
 routes.post('/signup', userController.signup)
 
 routes.get('/users', userController.getUsers)

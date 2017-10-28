@@ -1,0 +1,254 @@
+#%RAML 1.0
+title: API-News
+baseUri: https://martin-api-rest.herokuapp.com/
+/users:
+    get:
+        description: Muestra todos los usuarios
+        responses:
+            200:
+                body:
+                    application/json:
+                        example: |
+                        [
+                            {
+                                "_id": "59f4b2b8583916712b2ae4a1",
+                                "username": "martinlaizgome",
+                                "name": "Martin Laiz",
+                                "birthdate": "1996-10-17T00:00:00.000Z"
+                            }
+                        ]
+    /{id}:
+        get:
+            description: Muestra un usuario
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: |
+                            {
+                                "_id": "59f4b2b8583916712b2ae4a1",
+                                "username": "martinlaizgome",
+                                "name": "Martin Laiz",
+                                "birthdate": "1996-10-17T00:00:00.000Z"
+                            }
+        put:
+            description: Actualiza los datos el usuario
+            headers: [
+                {
+                    "Authorization": "Basic eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1OWY0YjUyZWNkYjBmZDczYTE0ZjlmNGIiLCJpYXQiOjE1MDkyMDkzOTAsImV4cCI6MTUwOTgxNzc5MH0.tDpFR9YWV_0RNqgd_MPPSmbCdWXrU7231vT9mXgrrtM"
+                }
+            ]
+            body:
+                example: |
+                {
+                    "username": "martinlaizgome",
+                    "name": "Martin Laiz",
+                    "birthdate": "1996-10-17T00:00:00.000Z",
+                    "password": "martin"
+                }
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: |
+                            {
+                                "_id": "59f4b2b8583916712b2ae4a1",
+                                "username": "martinlaizgome",
+                                "name": "Martin Laiz",
+                                "birthdate": "1996-10-17T00:00:00.000Z"
+                            }
+        delete:
+            description: Borra un usuario
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: |
+                            {
+                                "messaje": "Usuario borrado"
+                            }
+/notices:
+    get:
+        description: Devuelve todas las noticias
+        responses:
+            200:
+                body:
+                    application/json:
+                        example: |
+                        {
+                            "messaje": "OK",
+                            "notices": [
+                                {
+                                    "_id": "59f4c7560fa1847e992d14d3",
+                                    "title": "Titulo de noticia",
+                                    "description": "Descripción de la noticia",
+                                    "author": "59edbf76648c165894a952a6",
+                                    "category": "LaCategoria",
+                                    "views": 0,
+                                    "keywords": "palabras clave para la noticia",
+                                    "__v": 0,
+                                    "comments": [],
+                                    "publishdate": "2017-10-25T19:00:00.000Z"
+                                }
+                            ]
+                        }
+    post:
+        description: Crea una noticia
+        body:
+            example: |
+            {
+                "title": "Titulo de noticia",
+                "description": "Descripción de la noticia",
+                "author": "59edbf76648c165894a952a6",
+                "category": "LaCategoria",
+                "keywords": "palabras clave para la noticia",
+                "publishdate": "2017-10-25T19:00:00.000Z"
+            }
+        responses:
+            200:
+                body:
+                    application/json:
+                        example: |
+                        {
+                            "messaje": "OK",
+                            "notice": {
+                                "_id": "59f4c7560fa1847e992d14d3",
+                                "title": "Titulo de noticia",
+                                "description": "Descripción de la noticia",
+                                "author": "59edbf76648c165894a952a6",
+                                "category": "LaCategoria",
+                                "views": 0,
+                                "keywords": "palabras clave para la noticia",
+                                "__v": 0,
+                                "comments": [],
+                                "publishdate": "2017-10-25T19:00:00.000Z"
+                            }
+                        }
+    /{id}:
+        get:
+            description: Muestra una noticia
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: |
+                            {
+                                "messaje": "OK",
+                                "notice": {
+                                    "_id": "59f4c7560fa1847e992d14d3",
+                                    "title": "Titulo de noticia",
+                                    "description": "Descripción de la noticia",
+                                    "author": "59edbf76648c165894a952a6",
+                                    "category": "LaCategoria",
+                                    "views": 0,
+                                    "keywords": "palabras clave para la noticia",
+                                    "__v": 0,
+                                    "comments": [],
+                                    "publishdate": "2017-10-25T19:00:00.000Z"
+                                }
+                            }
+        put:
+            description: Actualiza una noticia
+            body:
+                example: |
+                {
+                    "title": "Titulo de noticia",
+                    "description": "Descripción de la noticia",
+                    "category": "LaCategoria",
+                    "keywords": "palabras clave para la noticia",
+                    "publishdate": "2017-10-25T19:00:00.000Z"
+                }
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: |
+                            {
+                                "messaje": "OK",
+                                "notice": {
+                                    "_id": "59f4c7560fa1847e992d14d3",
+                                    "title": "Titulo de noticia",
+                                    "description": "Descripción de la noticia",
+                                    "author": "59edbf76648c165894a952a6",
+                                    "category": "LaCategoria",
+                                    "views": 0,
+                                    "keywords": "palabras clave para la noticia",
+                                    "__v": 0,
+                                    "comments": [],
+                                    "publishdate": "2017-10-25T19:00:00.000Z"
+                                }
+                            }
+        delete:
+            description: Borra una noticia
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: |
+                            {
+                                "messaje": "Noticia borrada"
+                            }
+    /category:
+        /{id}:
+            get:
+                description: Muestra las noticias de una categoria
+                responses:
+                    200:
+                        body:
+                            application/json:
+                                example: |
+                                {
+                                    "messaje": "OK",
+                                    "notices": [
+                                        {
+                                            "_id": "59f4c7560fa1847e992d14d3",
+                                            "title": "Titulo de noticia",
+                                            "description": "Descripción de la noticia",
+                                            "author": "59edbf76648c165894a952a6",
+                                            "category": "LaCategoria",
+                                            "views": 0,
+                                            "keywords": "palabras clave para la noticia",
+                                            "__v": 0,
+                                            "comments": [],
+                                            "publishdate": "2017-10-25T19:00:00.000Z"
+                                        }
+                                    ]
+                                }
+/login:
+    put:
+        description: Inica sesión un usuario
+        body:
+            example: |
+            {
+                "username": "martinlaizgome",
+                "password": "martin"
+            }
+        responses:
+            200:
+                body:
+                    application/json:
+                        example: |
+                        {
+                            "messaje": "Login correcto",
+                            "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1OWY0YjUyZWNkYjBmZDczYTE0ZjlmNGIiLCJpYXQiOjE1MDkyMDkzOTAsImV4cCI6MTUwOTgxNzc5MH0.tDpFR9YWV_0RNqgd_MPPSmbCdWXrU7231vT9mXgrrtM"
+                        }
+/signup:
+    post:
+        description: Registra un usuario
+        body:
+            example: |
+            {
+                "username": "martinlaizgome",
+                "name": "Martin Laiz",
+                "birthdate": "1996-10-17",
+                "password": "martin"
+            }
+        responses:
+            200:
+                body:
+                    application/json:
+                        example: |
+                        {
+                            "messaje": "Login correcto",
+                            "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1OWY0YjUyZWNkYjBmZDczYTE0ZjlmNGIiLCJpYXQiOjE1MDkyMDkzOTAsImV4cCI6MTUwOTgxNzc5MH0.tDpFR9YWV_0RNqgd_MPPSmbCdWXrU7231vT9mXgrrtM"
+                        }

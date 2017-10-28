@@ -37,7 +37,7 @@ function signup(req, res) {
 }
 
 function getUsers(req, res) {
-    User.find({},function(err, users) {
+    User.find({}).select('-password -__v').exec(function(err, users) {
         if(err) res.status(500).send({ messaje : 'Error at users' })
         else if(users.length == 0) res.status(200).send({ messaje : 'No exist users' })
         else res.status(200).send(users)
@@ -45,7 +45,7 @@ function getUsers(req, res) {
 }
 
 function getUser(req, res) {
-    User.findById(req.params.id, function(err, user) {
+    User.findById(req.params.id).select('-password -__v').exec(function(err, user) {
         if(err) res.status(400).send({ messaje: 'Error finding user'})
         else if(!user) res.status(404).send({ messaje: 'User not found'})
         else res.status(200).send(user)
@@ -53,8 +53,11 @@ function getUser(req, res) {
 }
 
 function updateUser(req, res) {
-    var token = auth.verifyToken(req.headers.authorization)
-    // console.log(token.id);
+    var token = auth.verifyToken(req.headers.authorization.split(" ")[1])
+    console.log('-------- Token ----------');
+    console.log(token);
+    console.log('-------- Token ----------');
+
     if(token.id) {
         if(token.id == req.params.id){
             User.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true}, function(err, user){
