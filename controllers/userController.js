@@ -2,23 +2,23 @@ const User = require('../models/user');
 const auth = require('./authController');
 
 function login(req, res) {
-    var messaje = 'Login correcto'
     User.findOne({ username: req.body.username }, function(err, user) {
         if (err) {
-            messaje = 'Error login'
-            res.status(500)
+            messaje =
+            res.status(500).send({ messaje: 'Error login' })
         }
         else if (!user) {
             messaje = 'User not exist'
-            res.status(200)
+            res.status(200).send({ messaje: 'User not exist' })
         }
         else if (user && user.password == req.body.password) {
-            return res.status(200).send({
-                messaje,
-                token: auth.createToken(user)
+            auth.createToken(user, function(token) {
+                res.status(200).send({
+                    messaje: 'Login correcto',
+                    token
+                })
             })
         }
-        res.send({ messaje })
     })
 }
 
@@ -37,7 +37,7 @@ function signup(req, res) {
 }
 
 function getUsers(req, res) {
-    User.find({}).select('-password -__v').exec(function(err, users) {
+    User.find({}).select('-password -__v -birthdate').exec(function(err, users) {
         if(err) res.status(500).send({ messaje : 'Error at users' })
         else if(users.length == 0) res.status(200).send({ messaje : 'No exist users' })
         else res.status(200).send(users)
@@ -53,26 +53,23 @@ function getUser(req, res) {
 }
 
 function updateUser(req, res) {
-    var token = auth.verifyToken(req.headers.authorization.split(" ")[1])
-    console.log('-------- Token ----------');
-    console.log(token);
-    console.log('-------- Token ----------');
-
-    if(token.id) {
-        if(token.id == req.params.id){
-            User.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true}, function(err, user){
-                if(err) res.status(400).send({ messaje: 'Error finding user'})
-                else if(!user) res.status(404).send({ messaje: 'User not found'})
-                else res.status(200).send(user)
-            })
+    auth.verifyToken(req.headers.authorization, function(token) {
+        if(token.id) {
+            if(token.id == req.params.id){
+                User.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true}, function(err, user){
+                    if(err) res.status(400).send({ messaje: 'Error finding user'})
+                    if(!user) res.status(404).send({ messaje: 'User not found'})
+                    res.status(200).send(user)
+                })
+            }
+            else {
+                res.status(401).send({ messaje: 'No tienes permisos para editar el usuario' })
+            }
         }
         else {
-            res.status(401).send({ messaje: 'No puedes editar el usuario' })
+            res.status(401).send(token)
         }
-    }
-    else {
-        res.status(401).send(token.messaje)
-    }
+    })
 }
 
 function removeUser(req, res) {

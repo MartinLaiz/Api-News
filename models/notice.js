@@ -7,7 +7,11 @@ var noticeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref : 'User'
     },
-    category : String,
+    category: String,
+    /*category : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref : 'Category'
+    },*/
     publishdate : {
         type : Date,
         default : Date.now

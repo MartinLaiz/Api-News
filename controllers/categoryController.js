@@ -1,43 +1,28 @@
-const Notice = require('../models/notice');
+const Category = require('../models/category');
 
-function getNotices(req, res) {
-    var now = Date.now()
-    Notice.find({}).
-    where({ publishdate: { $gte: now } }).
-    populate({
-        path: 'author',
-        select: '-password -__v -birthdate'
-    }).
-    select('-__v -comments').
-    exec(function(err, notices) {
-        if(err) res.status(500).send({ messaje: 'Error al buscar la noticia', notices })
-        if(notices==false) res.status(404).send({ messaje: 'Notices not found', notices })
-        else {
-            console.log(notices);
-            notices = notices.slice(0,20)
-            notices = notices.map(function(x) {
-                x.description = x.description.slice(0,100) + '...'
-                return x
-            })
-            console.log(notices);
-            res.status(200).send({ messaje: 'Ok', notices })
-        }
+function getCategories(req, res) {
+    var today = Date.now()
+    Category.find({ publishdate: { $lte: today } }, function(err, categories) {
+        if(err) res.status(500).send({ messaje: 'Error al crear la noticia' })
+        if(categories.length == 0) res.status(200).send('No exist categories')
+        categories = categories.slice(0,20)
+        res.status(200).send({ messaje: 'Ok', categories })
     })
 }
 
 function getNoticesCategory(req, res) {
     var today = Date.now()
-    Notice.find({ category: req.params.category, publishdate: { $lte: today } }, function(err, notices) {
+    Category.find({ category: req.params.category, publishdate: { $lte: today } }, function(err, categories) {
         if(err) res.status(500).send({ messaje: 'Error al crear la noticia' })
-        if(notices.length == 0) res.status(200).send('No exist notices')
-        notices = notices.slice(0,20)
-        res.status(200).send({ messaje: 'Ok', notices })
+        if(categories.length == 0) res.status(200).send('No exist categories')
+        categories = categories.slice(0,20)
+        res.status(200).send({ messaje: 'Ok', categories })
     })
 }
 
-function createNotice(req, res) {
+function createCategory(req, res) {
     var messaje = 'OK'
-    Notice.create({
+    Category.create({
         title: req.body.title,
         description: req.body.description,
         author: req.body.author,
@@ -45,7 +30,7 @@ function createNotice(req, res) {
         publishdate: req.body.publishdate,
         views: 0,
         keywords: req.body.keywords,
-    }, function(err, notice) {
+    }, function(err, category) {
         if(err) {
             res.status(500)
             messaje = 'Error al crear la noticia'
@@ -53,48 +38,48 @@ function createNotice(req, res) {
         else res.status(200)
         res.send({
             messaje,
-            notice
+            category
         })
     })
 }
 
-function getNotice(req, res) {
+function getCategory(req, res) {
     var messaje = 'OK'
-    Notice.findById(req.params.id, function(err, notice) {
+    Category.findById(req.params.id, function(err, category) {
         if(err) {
             res.status(500)
             messaje = 'Error al crear la noticia'
         }
-        else if(!notice) {
+        else if(!category) {
             res.status(404)
-            messaje = 'Notice not found'
+            messaje = 'Category not found'
         }
         else res.status(200)
         res.send({
             messaje,
-            notice
+            category
         })
     })
 }
 
-function updateNotice(req, res) {
+function updateCategory(req, res) {
     auth.verifyToken(req.headers.authorization, function(token) {
         if(token.id) {
-            Notice.findOne({ _id: req.params.id} ,function(err, notice) {
-                if(token.id == notice.author){
-                    Notice.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true}, function(err, notice){
+            Category.findOne({ _id: req.params.id} ,function(err, category) {
+                if(token.id == category.author){
+                    Category.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true}, function(err, category){
                         if(err) {
                             res.status(500)
                             messaje = 'Error al crear la noticia'
                         }
-                        else if(!notice) {
+                        else if(!category) {
                             res.status(404)
-                            messaje = 'Notice not found'
+                            messaje = 'Category not found'
                         }
                         else res.status(200)
                         res.send({
                             messaje,
-                            notice
+                            category
                         })
                     })
                 }else {
@@ -128,16 +113,16 @@ function updateUser(req, res) {
     })
 }
 
-function removeNotice(req, res) {
-    Notice.findByIdAndRemove(req.params.id, function (err, notice) {
-        var messaje = 'Noticia \''+ notice.title + '\' borrada'
+function removeCategory(req, res) {
+    Category.findByIdAndRemove(req.params.id, function (err, category) {
+        var messaje = 'Noticia \''+ category.title + '\' borrada'
         if(err) {
             res.status(500)
             messaje = 'Error al crear la noticia'
         }
-        else if(!notice) {
+        else if(!category) {
             res.status(404)
-            messaje = 'Notice not found'
+            messaje = 'Category not found'
         }
         else res.status(200)
         res.send({
@@ -147,10 +132,10 @@ function removeNotice(req, res) {
 }
 
 module.exports = {
-    getNotices,
+    getCategories,
     getNoticesCategory,
-    createNotice,
-    getNotice,
-    updateNotice,
-    removeNotice
+    createCategory,
+    getCategory,
+    updateCategory,
+    removeCategory
 }
