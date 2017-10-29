@@ -14,7 +14,7 @@ var noticeSchema = new mongoose.Schema({
     },*/
     publishdate : {
         type : Date,
-        default : Date.now
+        default : Date()
     },
     views : Number,
     keywords : String,

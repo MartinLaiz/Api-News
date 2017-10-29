@@ -18,6 +18,7 @@ routes.put('/users/:id', userController.updateUser)
 routes.delete('/users/:id', userController.removeUser)
 
 routes.get('/notices', noticeController.getNotices)
+routes.get('/notices/author/:id', noticeController.getNoticesUser)
 routes.post('/notices', noticeController.createNotice)
 routes.get('/notices/:id', noticeController.getNotice)
 routes.put('/notices/:id', noticeController.updateNotice)
