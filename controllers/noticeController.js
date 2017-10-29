@@ -1,11 +1,22 @@
 const Notice = require('../models/notice');
+const auth = require('../controllers/authController');
 
 function getNotices(req, res) {
     var now = new Date()
-    Notice.find({ publishdate: { $lte: now } }).
+    var options = { publishdate: { $lte: now } }
+    if(req.query.category) {
+        options.category = req.query.category
+    }
+    if(req.query.author) {
+        options.author = req.query.author
+    }
+    console.log(options);
+    Notice.find(options).
     populate({
         path: 'author',
         select: '-password -__v -birthdate'
+    },{
+        path: 'category'
     }).
     select('-__v -comments').
     exec(function(err, notices) {
@@ -34,7 +45,6 @@ function getNoticesCategory(req, res) {
 }
 
 function createNotice(req, res) {
-    var messaje = 'OK'
     auth.verifyToken(req.headers.authorization, function(token) {
         if(token.id) {
             Notice.create({
@@ -46,39 +56,26 @@ function createNotice(req, res) {
                 views: 0,
                 keywords: req.body.keywords,
             }, function(err, notice) {
-                if(err) {
-                    res.status(500)
-                    messaje = 'Error al crear la noticia'
-                }
-                else res.status(200)
-                res.send({
-                    messaje,
-                    notice
-                })
+                if(err) res.status(500).send({ messaje: 'Error al crear la noticia' })
+                else res.status(200).send({ messaje: 'Ok',notice})
             })
         }
         else {
             res.status(200).send({ messaje: 'You can not create a notice, first login or signup' })
         }
-    }
+    })
 }
 
 function getNotice(req, res) {
-    var messaje = 'OK'
-    Notice.findById(req.params.id, function(err, notice) {
-        if(err) {
-            res.status(500)
-            messaje = 'Error al crear la noticia'
-        }
-        else if(!notice) {
-            res.status(404)
-            messaje = 'Notice not found'
-        }
-        else res.status(200)
-        res.send({
-            messaje,
-            notice
-        })
+    Notice.findOneAndUpdate({ _id: req.params.id }, { $inc: { views: 1 } }).
+    populate({
+        path: 'comments.user',
+        select: '-password -__v -birthdate'
+    }).
+    exec(function(err, notice) {
+        if(err) res.status(500).send({ messaje: 'Error al crear la noticia' })
+        else if(!notice) res.status(404).send({ messaje: 'Notice not found' })
+        else res.status(200).send({ messaje: 'OK', notice })
     })
 }
 
@@ -114,28 +111,59 @@ function updateNotice(req, res) {
 }
 
 function removeNotice(req, res) {
-    Notice.findByIdAndRemove(req.params.id, function (err, notice) {
-        var messaje = 'Noticia \''+ notice.title + '\' borrada'
-        if(err) {
-            res.status(500)
-            messaje = 'Error al crear la noticia'
-        }
-        else if(!notice) {
-            res.status(404)
-            messaje = 'Notice not found'
-        }
-        else res.status(200)
-        res.send({
-            messaje
-        })
+    Notice.findByIdAndRemove(req.params.id).
+    exec(function (err, notice) {
+        if(err) res.status(500).send({ messaje: 'Error al crear la noticia' })
+        else if(!notice) res.status(404).send({ messaje: 'Notice not found' })
+        else res.status(200).send({ messaje: 'Noticia borrada' })
     })
 }
 
 function getNoticesUser(req, res) {
-    Notice.find({ author: req.params.id }).
-    select('').
-    exec()
+    auth.verifyToken(req.headers.authorization, function(token) {
+        if(token.id){
+            Notice.find({ author: req.params.id }).
+            select('').
+            exec(function(err, notices) {
+                if(err) res.status(500).send({ messaje: 'Error al cargar las noticias' })
+                else if(!notice) res.status(404).send({ messaje: 'Notices not found' })
+                else res.status(200).send({ messaje: 'Ok', notices })
+            })
+        }
+        else {
+            res.status(200).send({ messaje: 'Error id' })
+        }
+    })
+}
 
+function postComment(req, res){
+    auth.verifyToken(req.headers.authorization, function(token) {
+        if(token.id){
+            var comment = {
+                comment: req.body.comment,
+                user: token.id
+            }
+            Notice.findOneAndUpdate(
+                { _id: req.params.id },
+                { $push: { comments: comment } }
+            ).
+            exec(function(err, notice) {
+                if(err) {
+                    res.status(500)
+                    messaje = 'Error al comentar la noticia'
+                }
+                else if(!notice) {
+                    res.status(404)
+                    messaje = 'Notice not found'
+                }
+                else res.status(200)
+
+            })
+        }
+        else {
+            res.status(200).send({ messaje: 'Error id' })
+        }
+    })
 }
 
 module.exports = {
@@ -145,5 +173,6 @@ module.exports = {
     createNotice,
     getNotice,
     updateNotice,
-    removeNotice
+    removeNotice,
+    postComment
 }

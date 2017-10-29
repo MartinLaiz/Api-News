@@ -70,6 +70,12 @@ baseUri: https://martin-api-rest.herokuapp.com/
 /notices:
     get:
         description: Devuelve todas las noticias
+        queryParameters:
+            cat:
+                displayName: Category
+                type: ObjectId
+                description: Id de una categoria
+                required: false
         responses:
             200:
                 body:
