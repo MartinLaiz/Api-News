@@ -1,12 +1,14 @@
 ## Casos de uso API de noticias
 
  - Publico
-  - Cualquier usuario podrá consultar las noticias no publicadas
+  - Cualquier usuario podrá consultar las noticias publicadas
   - Cualquier usuario podrá consultar los usuarios
+  - Cualquier usuario podrá consultar las categorias
   - Cualquier usuario podrá registrarse
 
  - Privado
   - Solo los usuarios registrados podrán crear noticias
+  - Solo los creadores de la noticia podrán verla si no se ha publicado aun
   - Solo los usuarios registrados podrán borrar noticias
   - Solo el creador de la noticia podrá borrarla y modificarla
 

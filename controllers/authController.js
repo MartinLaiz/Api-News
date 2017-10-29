@@ -4,54 +4,55 @@ const User = require('../models/user')
 
 var secret_token = 'miCadenaSecreta'
 
-function createToken(user) {
+function createToken(user, callback) {
     var payload = {
-        sub: user._id,
+        id: user._id,
+        username: user.username,
         iat: moment().unix(),
-        exp: moment().add(7, 'days').unix()
+        exp: moment().add(5, 'days').unix()
     }
-    return jwt.encode(payload, secret_token)
+    callback(jwt.encode(payload, secret_token))
 }
 
-function verifyToken(auth) {
-    var response = {}
+function verifyToken(auth, callback) {
     if(!auth) {
-        response = {
+        callback({
             id: null,
-            messaje: 'No authorization header'
-        }
+            messaje: 'No auth'
+        })
     }
-
-    var payload = jwt.decode(auth, secret_token);
-
-    if(payload.exp <= moment().unix()) {
-        response = {
+    var payload
+    try {
+        payload = jwt.decode(auth, secret_token);
+    } catch (e) {
+        callback({
             id: null,
             messaje: 'Token expired'
-        }
+        })
+        return
     }
-    User.findById({ _id: payload.sub}, function(err, user) {
-        console.log(payload.sub);
+    User.findOne({ _id: payload.id}, function(err, user) {
         if(err) {
-            response = {
+            callback({
                 id: null,
-                messaje: 'Error getting user auth'
-            }
+                messaje: 'Error User'
+            })
+
         }
         else if(!user) {
-            response = {
+            callback({
                 id: null,
-                messaje: 'No exist user auth'
-            }
+                messaje: 'Wrong user'
+            })
+
         }
         else {
-            response = {
+            callback({
                 id: user._id,
-                messaje: 'Correct token'
-            }
+                messaje: 'Ok'
+            })
         }
     })
-    return response
 }
 
 module.exports = {
