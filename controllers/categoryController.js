@@ -15,8 +15,8 @@ function createCategory(req, res) {
         name: req.body.name
     }, function(err, category) {
         if(err) res.status(500).send({ messaje: 'Error al crear la noticia' })
-        if(categories.length == 0) res.status(200).send('No existe la categoria')
-        res.status(200).send({ messaje: 'Ok', categories })
+        if(!category) res.status(200).send('No existe la categoria')
+        res.status(200).send({ messaje: 'Ok', category })
     })
 }
 

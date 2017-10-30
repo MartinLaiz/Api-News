@@ -4,31 +4,36 @@ const auth = require('../controllers/authController');
 function getNotices(req, res) {
     var now = new Date()
     var options = { publishdate: { $lte: now } }
+    var links = {
+        mostrarUsuarios: '/users',
+        mostrarCategoias: '/categories',
+        mostrarNoticia: '/notices/_id'
+    }
     if(req.query.category) {
         options.category = req.query.category
     }
     if(req.query.author) {
         options.author = req.query.author
     }
-    console.log(options);
     Notice.find(options).
-    populate({
+    populate([{
         path: 'author',
         select: '-password -__v -birthdate'
     },{
-        path: 'category'
-    }).
+        path: 'category',
+        select: '-__v'
+    }]).
     select('-__v -comments').
     exec(function(err, notices) {
-        if(err) res.status(500).send({ messaje: 'Error al buscar la noticia', notices })
-        if(notices==false) res.status(404).send({ messaje: 'Notices not found', notices })
+        if(err) res.status(500).send({ messaje: 'Error al buscar la noticia', notices, links })
+        if(notices==false) res.status(404).send({ messaje: 'Notices not found', notices, links })
         else {
             notices = notices.slice(0,20)
             notices = notices.map(function(x) {
                 x.description = x.description.slice(0,100) + '...'
                 return x
             })
-            res.status(200).send({ messaje: 'Ok', notices })
+            res.status(200).send({ messaje: 'Ok', links, notices })
         }
     })
 }
@@ -56,7 +61,7 @@ function createNotice(req, res) {
                 views: 0,
                 keywords: req.body.keywords,
             }, function(err, notice) {
-                if(err) res.status(500).send({ messaje: 'Error al crear la noticia' })
+                if(err) res.status(500).send({ messaje: 'Error al crear la noticia', error: err })
                 else res.status(200).send({ messaje: 'Ok',notice})
             })
         }
