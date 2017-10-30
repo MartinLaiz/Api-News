@@ -30,3 +30,5 @@ app.use('/',routes)
 app.listen(port, function(err, res) {
     console.log('Runing server on port: ' + port )
 })
+
+module.exports = app;

@@ -36,10 +36,11 @@ function updateCategory(req, res) {
 }
 
 function removeCategory(req, res) {
-    Category.findByIdAndRemove(req.params.id, function (err, category) {
+    Category.findOneAndRemove({ _id: req.params.id }, function (err, category) {
+        console.log(category);
         if(err) res.status(500).send({ messaje: 'Error al borrar la categoria' })
-        if(category.length == 0) res.status(200).send('No existe la categoria')
-        res.status(200).send({ messaje: 'Categoria borrada' })
+        else if(!category) res.status(200).send('No existe la categoria')
+        else res.status(200).send({ messaje: 'Categoria borrada' })
     })
 }
 
