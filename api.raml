@@ -13,9 +13,9 @@ baseUri: https://martin-api-rest.herokuapp.com/
                             {
                                 "_id": "59f4b2b8583916712b2ae4a1",
                                 "username": "martinlaizgome",
-                                "name": "Martin Laiz",
-                                "birthdate": "1996-10-17T00:00:00.000Z"
-                            }
+                                "name": "Martin Laiz"
+                            },
+                            {...}
                         ]
     /{id}:
         get:
@@ -35,7 +35,7 @@ baseUri: https://martin-api-rest.herokuapp.com/
             description: Actualiza los datos el usuario
             headers: [
                 {
-                    "Authorization": "Basic eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1OWY0YjUyZWNkYjBmZDczYTE0ZjlmNGIiLCJpYXQiOjE1MDkyMDkzOTAsImV4cCI6MTUwOTgxNzc5MH0.tDpFR9YWV_0RNqgd_MPPSmbCdWXrU7231vT9mXgrrtM"
+                    "Authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1OWY0YjUyZWNkYjBmZDczYTE0ZjlmNGIiLCJpYXQiOjE1MDkyMDkzOTAsImV4cCI6MTUwOTgxNzc5MH0.tDpFR9YWV_0RNqgd_MPPSmbCdWXrU7231vT9mXgrrtM"
                 }
             ]
             body:
@@ -56,6 +56,7 @@ baseUri: https://martin-api-rest.herokuapp.com/
                                 "username": "martinlaizgome",
                                 "name": "Martin Laiz",
                                 "birthdate": "1996-10-17T00:00:00.000Z"
+                                "password"
                             }
         delete:
             description: Borra un usuario
@@ -67,6 +68,30 @@ baseUri: https://martin-api-rest.herokuapp.com/
                             {
                                 "messaje": "Usuario borrado"
                             }
+        /notices:
+            description: Muestra las noticias de un usuario
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: |
+                            {
+                                "_id": "59f6e128b104eb1fe72dcb3c",
+                                "title": "Titulo de la noticia",
+                                "description": "Descripcion de la noticia",
+                                "author": {
+                                    "_id": "59f6df910fa5621bbf207625",
+                                    "username": "martinlaiz",
+                                    "name": "Martin Laiz"
+                                },
+                                "category": {
+                                    "_id": "59f6e111b104eb1fe72dcb3b",
+                                    "name": "Categoria"
+                                },
+                                "views": 14,
+                                "keywords": "palabras clave",
+                                "publishdate": "2017-10-29T19:12:00.000Z"
+                            }
 /notices:
     get:
         description: Devuelve todas las noticias
@@ -75,6 +100,11 @@ baseUri: https://martin-api-rest.herokuapp.com/
                 displayName: Category
                 type: ObjectId
                 description: Id de una categoria
+                required: false
+            author:
+                displayName: Autor
+                type: ObjectId
+                description: Id de un autor
                 required: false
         responses:
             200:
@@ -85,16 +115,21 @@ baseUri: https://martin-api-rest.herokuapp.com/
                             "messaje": "OK",
                             "notices": [
                                 {
-                                    "_id": "59f4c7560fa1847e992d14d3",
-                                    "title": "Titulo de noticia",
-                                    "description": "Descripción de la noticia",
-                                    "author": "59edbf76648c165894a952a6",
-                                    "category": "LaCategoria",
-                                    "views": 0,
-                                    "keywords": "palabras clave para la noticia",
-                                    "__v": 0,
-                                    "comments": [],
-                                    "publishdate": "2017-10-25T19:00:00.000Z"
+                                    "_id": "59f6e128b104eb1fe72dcb3c",
+                                    "title": "Titulo de la noticia",
+                                    "description": "Descripcion de la noticia",
+                                    "author": {
+                                        "_id": "59f6df910fa5621bbf207625",
+                                        "username": "martinlaiz",
+                                        "name": "Martin Laiz"
+                                    },
+                                    "category": {
+                                        "_id": "59f6e111b104eb1fe72dcb3b",
+                                        "name": "Categoria"
+                                    },
+                                    "views": 14,
+                                    "keywords": "palabras clave",
+                                    "publishdate": "2017-10-29T19:12:00.000Z"
                                 }
                             ]
                         }

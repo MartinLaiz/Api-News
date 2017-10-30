@@ -38,18 +38,12 @@ function getNotices(req, res) {
     })
 }
 
-function getNoticesCategory(req, res) {
-    var today = new Date()
-    Notice.find({ category: req.params.category, publishdate: { $lte: today } }).
-    exec(function(err, notices) {
-        if(err) res.status(500).send({ messaje: 'Error al crear la noticia' })
-        if(notices.length == 0) res.status(200).send('No exist notices')
-        notices = notices.slice(0,20)
-        res.status(200).send({ messaje: 'Ok', notices })
-    })
-}
-
 function createNotice(req, res) {
+    var links = {
+        mostrarUsuarios: '/users',
+        mostrarCategoias: '/categories',
+        mostrarNoticia: '/notices/_id'
+    }
     auth.verifyToken(req.headers.authorization, function(token) {
         if(token.id) {
             Notice.create({
@@ -62,7 +56,7 @@ function createNotice(req, res) {
                 keywords: req.body.keywords,
             }, function(err, notice) {
                 if(err) res.status(500).send({ messaje: 'Error al crear la noticia', error: err })
-                else res.status(200).send({ messaje: 'Ok',notice})
+                else res.status(200).send({ messaje: 'Ok', links, notice })
             })
         }
         else {
@@ -72,14 +66,14 @@ function createNotice(req, res) {
 }
 
 function getNotice(req, res) {
-    Notice.findOneAndUpdate({ _id: req.params.id }, { $inc: { views: 1 } }).
+    Notice.findOneAndUpdate(options, { $inc: { views: 1 } }).
     populate({
         path: 'comments.user',
         select: '-password -__v -birthdate'
     }).
     exec(function(err, notice) {
         if(err) res.status(500).send({ messaje: 'Error al crear la noticia' })
-        else if(!notice) res.status(404).send({ messaje: 'Notice not found' })
+        else if(!notice) res.status(404).send({ messaje: 'Noticia no encontrada' })
         else res.status(200).send({ messaje: 'OK', notice })
     })
 }
@@ -88,7 +82,7 @@ function updateNotice(req, res) {
     auth.verifyToken(req.headers.authorization, function(token) {
         if(token.id) {
             Notice.findOne({ _id: req.params.id} ,function(err, notice) {
-                if(token.id == notice.author){
+                if(token.id.toString() == notice.author.toString()){
                     Notice.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true}, function(err, notice){
                         if(err) {
                             res.status(500)
@@ -96,7 +90,7 @@ function updateNotice(req, res) {
                         }
                         else if(!notice) {
                             res.status(404)
-                            messaje = 'Notice not found'
+                            messaje = 'Noticia no encontrada'
                         }
                         else res.status(200)
                         res.send({
@@ -116,28 +110,65 @@ function updateNotice(req, res) {
 }
 
 function removeNotice(req, res) {
-    Notice.findByIdAndRemove(req.params.id).
-    exec(function (err, notice) {
-        if(err) res.status(500).send({ messaje: 'Error al crear la noticia' })
-        else if(!notice) res.status(404).send({ messaje: 'Notice not found' })
-        else res.status(200).send({ messaje: 'Noticia borrada' })
+    var links = {
+        mostrarUsuarios: '/users',
+        mostrarCategoias: '/categories',
+        mostrarNoticias: '/notices'
+    }
+    auth.verifyToken(req.headers.authorization, function(token) {
+        Notice.findOne({_id: req.params.id}).
+        exec(function(err, notice) {
+            if(err) res.status(500).send({ messaje: 'Error al buscar la noticia' })
+            else if(!notice) res.status(404).send({ messaje: 'Noticia no encontrada' })
+            else if(notice.author.toString() == token.id.toString()) {
+                Notice.findOneAndRemove({_id: notice.id }).
+                exec(function(err, notice) {
+                    if(err) res.status(500).send({ messaje: 'Error al borrar la noticia' })
+                    else if(!notice) res.status(404).send({ messaje: 'Notice not found' })
+                    else res.status(200).send({ messaje: 'Noticia borrada', links })
+                })
+            }
+            else {
+                res.status(200).send({ messaje: 'No tienes permisos para realizar esta acción' })
+            }
+        })
     })
 }
 
 function getNoticesUser(req, res) {
+    var links = {
+        mostrarUsuarios: '/users',
+        mostrarCategoias: '/categories',
+        mostrarNoticias: '/notices',
+        mostrarNoticia: '/notices/_id'
+    }
     auth.verifyToken(req.headers.authorization, function(token) {
-        if(token.id){
-            Notice.find({ author: req.params.id }).
-            select('').
-            exec(function(err, notices) {
-                if(err) res.status(500).send({ messaje: 'Error al cargar las noticias' })
-                else if(!notice) res.status(404).send({ messaje: 'Notices not found' })
-                else res.status(200).send({ messaje: 'Ok', notices })
+        let options = {
+            author: req.params.id
+        }
+        if(token.id != req.params.id) {
+            options.publishdate = { $lte: new Date() }
+        }
+        Notice.find(options).
+        populate([{
+            path: 'author',
+            select: '-password -__v -birthdate'
+        },{
+            path: 'category',
+            select: '-__v'
+        }]).
+        select('-__v -comments').
+        exec(function(err, notices) {
+            if(err) res.status(500).send({ messaje: 'Error al cargar las noticias' })
+            else if(!notices) res.status(404).send({ messaje: 'Notices not found' })
+
+            notices = notices.slice(0,20)
+            notices = notices.map(function(x) {
+                x.description = x.description.slice(0,100) + '...'
+                return x
             })
-        }
-        else {
-            res.status(200).send({ messaje: 'Error id' })
-        }
+            res.status(200).send({ messaje: 'Ok', links, notices })
+        })
     })
 }
 
@@ -159,7 +190,7 @@ function postComment(req, res){
                 }
                 else if(!notice) {
                     res.status(404)
-                    messaje = 'Notice not found'
+                    messaje = 'Noticia no encontrada'
                 }
                 else res.status(200)
 
@@ -173,7 +204,6 @@ function postComment(req, res){
 
 module.exports = {
     getNotices,
-    getNoticesCategory,
     getNoticesUser,
     createNotice,
     getNotice,
