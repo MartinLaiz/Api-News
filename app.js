@@ -3,11 +3,12 @@ const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
 const routes = require('./routes')
-
 const bodyParser = require('body-parser')
+const cors = require('cors')
+
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
-
+app.use(cors())
 // Base de datos local = mongodb://localhost:27017
 // Base de datos externa = mongodb://apiadi:apiadi@ds113925.mlab.com:13925/newsapp
 mongoose.connect('mongodb://apiadi:apiadi@ds113925.mlab.com:13925/newsapp',{useMongoClient : true}, function(err){
