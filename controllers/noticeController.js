@@ -3,7 +3,7 @@ const auth = require('../controllers/authController');
 
 function getNotices(req, res) {
     var now = new Date()
-    var options = { publishdate: { $lte: now } }
+    var options = {}// publishdate: { $lte: now } }
     var links = {
         mostrarUsuarios: '/users',
         mostrarCategoias: '/categories',
@@ -26,7 +26,7 @@ function getNotices(req, res) {
     select('-__v -comments').
     exec(function(err, notices) {
         if(err) res.status(500).send({ messaje: 'Error al buscar la noticia', notices, links })
-        if(notices==false) res.status(404).send({ messaje: 'Notices not found', notices, links })
+        if(!notices) res.status(404).send({ messaje: 'Notices not found', notices, links })
         else {
             notices = notices.slice(0,20)
             notices = notices.map(function(x) {

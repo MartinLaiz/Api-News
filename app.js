@@ -14,12 +14,6 @@ app.use(cors())
 mongoose.connect('mongodb://apiadi:apiadi@ds113925.mlab.com:13925/newsapp',{useMongoClient : true}, function(err){
     if(err) {
         console.log('no connect mlab database');
-        mongoose.connect('mongodb://localhost:27017', {useMongoClient : true}, function(err){
-            if(err) {
-                console.log('no connect localhost database')
-            }
-            console.log('Connected to localhost database');
-        })
     }
     else {
         console.log('Connected to mlab database')
