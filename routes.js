@@ -5,7 +5,6 @@ var homeController = require('./controllers/homeController')
 var userController = require('./controllers/userController')
 var noticeController = require('./controllers/noticeController')
 var categoryController = require('./controllers/categoryController')
-var twitterController = require('./controllers/twitterController')
 
 routes.get('/', homeController.getHome)
 
@@ -28,8 +27,5 @@ routes.delete('/notices/:id', noticeController.removeNotice)
 routes.get('/categories', categoryController.getCategories)
 routes.post('/categories', categoryController.createCategory)
 routes.delete('/categories/:id', categoryController.removeCategory)
-/*
-routes.get('/notices/:id/share', twitterController.shareTwitter)
-routes.get('/notices/:id/search', twitterController.getNoticesTwitter)
-*/
+
 module.exports = routes;
