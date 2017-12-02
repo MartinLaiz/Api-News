@@ -4,7 +4,7 @@ const auth = require('./authController');
 function login(req, res) {
     User.findOne({ username: req.body.username }, function(err, user) {
         if (err) {
-            messaje =
+            messaje = 'Error'
             res.status(500).send({ messaje: 'Error login' })
         }
         else if (!user) {
@@ -12,11 +12,9 @@ function login(req, res) {
             res.status(200).send({ messaje: 'User not exist' })
         }
         else if (user && user.password == req.body.password) {
-            auth.createToken(user, function(token) {
-                res.status(200).send({
-                    messaje: 'Login correcto',
-                    token
-                })
+			res.status(200).send({
+				messaje: 'Login correcto',
+				token : auth.createToken(user)
             })
         }
     })

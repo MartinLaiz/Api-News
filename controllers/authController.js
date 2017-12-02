@@ -4,14 +4,14 @@ const User = require('../models/user')
 
 var secret_token = 'miCadenaSecreta'
 
-function createToken(user, callback) {
+function createToken(user) {
     var payload = {
         id: user._id,
         username: user.username,
         iat: moment().unix(),
         exp: moment().add(5, 'days').unix()
     }
-    callback(jwt.encode(payload, secret_token))
+    return jwt.encode(payload, secret_token)
 }
 
 function verifyToken(auth, callback) {
