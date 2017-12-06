@@ -28,11 +28,12 @@ function getNotices(req, res) {
         if(err) res.status(500).send({ messaje: 'Error al buscar la noticia', notices, links })
         if(notices==false) res.status(404).send({ messaje: 'Notices not found', notices, links })
         else {
-            notices = notices.slice(0,20)
+			console.log(notices)
+			notices = notices.slice(0,20)
             notices = notices.map(function(x) {
                 x.description = x.description.slice(0,100) + '...'
                 return x
-            })
+			})
             res.status(200).send({ messaje: 'Ok', links, notices })
         }
     })

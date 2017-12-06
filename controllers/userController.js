@@ -2,6 +2,7 @@ const User = require('../models/user');
 const auth = require('./authController');
 
 function login(req, res) {
+	console.log(req.body)
     User.findOne({ username: req.body.username }, function(err, user) {
         if (err) {
             messaje = 'Error'
