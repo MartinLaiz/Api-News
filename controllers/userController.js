@@ -2,6 +2,7 @@ const User = require('../models/user');
 const auth = require('./authController');
 
 function login(req, res) {
+	console.log(req.body)
     User.findOne({ username: req.body.username }, function(err, user) {
         if (err) {
             messaje = 'Error'
@@ -24,12 +25,11 @@ function signup(req, res) {
     User.findOne({ username: req.body.username }).
     exec(function(err, user) {
         if(err) res.status(400).send({ messaje: 'Error finding user' })
-        if(user) res.status(400).send({ messaje: 'User '+ req.body.username +' already exist' })
+        else if(user) res.status(400).send({ messaje: 'User '+ req.body.username +' already exist' })
         else {
             User.create(req.body, function(err, user) {
                 if(err) res.status(400).send({ messaje: 'Error creating user' })
-                if(user) return login(req, res)
-                res.status(200).send(user)
+                else if(user) res.status(200).send(user)
             })
         }
     })

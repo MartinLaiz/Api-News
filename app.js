@@ -8,9 +8,18 @@ const cors = require('cors')
 
 app.use(bodyParser.json())
 app.use(cors())
+
 mongoose.connect('mongodb://apiadi:apiadi@ds113925.mlab.com:13925/newsapp',{useMongoClient : true}, function(err){
     if(err) {
         console.log('no connect mlab database');
+	mongoose.connect('mongodb://localhost:27017',{useMongoClient : true}, function(err){
+		if(err) {
+			console.log('no connect local database');
+		}
+		else {
+			console.log('Connected to local database')
+		}
+	})
     }
     else {
         console.log('Connected to mlab database')
