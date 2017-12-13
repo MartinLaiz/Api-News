@@ -31,7 +31,7 @@ function getNotices(req, res) {
 			console.log(notices)
 			notices = notices.slice(0,20)
             notices = notices.map(function(x) {
-                x.description = x.description.slice(0,100) + '...'
+                x.description = x.description.slice(0,200) + '...'
                 return x
 			})
             res.status(200).send({ messaje: 'Ok', links, notices })
