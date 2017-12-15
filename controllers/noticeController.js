@@ -88,15 +88,15 @@ function updateNotice(req, res) {
                     Notice.findByIdAndUpdate(req.params.id, {$set: req.body}, {new: true}, function(err, notice){
                         if(err) {
                             res.status(500)
-                            messaje = 'Error al crear la noticia'
+                            res.send({messaje: 'Error al crear la noticia'})
                         }
                         else if(!notice) {
                             res.status(404)
-                            messaje = 'Noticia no encontrada'
+                            res.send({messaje: 'Noticia no encontrada'})
                         }
                         else res.status(200)
                         res.send({
-                            messaje,
+                            messaje: 'Ok',
                             notice
                         })
                     })
