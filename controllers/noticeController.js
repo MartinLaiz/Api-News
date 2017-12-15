@@ -67,9 +67,10 @@ function createNotice(req, res) {
 }
 
 function getNotice(req, res) {
+	var options = {_id: req.params.id}
     Notice.findOneAndUpdate(options, { $inc: { views: 1 } }).
     populate({
-        path: 'comments.user',
+        path: 'comments.user category author',
         select: '-password -__v -birthdate'
     }).
     exec(function(err, notice) {
