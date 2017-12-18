@@ -23,12 +23,12 @@ function getNotices(req, res) {
         path: 'category',
         select: '-__v'
     }]).
+    sort('-publishdate').
     select('-__v -comments').
     exec(function(err, notices) {
         if(err) res.status(500).send({ messaje: 'Error al buscar la noticia', notices, links })
         if(!notices) res.status(404).send({ messaje: 'Notices not found', notices, links })
         else {
-			console.log(notices)
 			notices = notices.slice(0,20)
             notices = notices.map(function(x) {
                 x.description = x.description.slice(0,200) + '...'

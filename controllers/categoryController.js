@@ -4,8 +4,8 @@ function getCategories(req, res) {
 	console.log('Get categories')
 	Category.find({}, function (err, categories) {
 		if (err) res.status(500).send({ messaje: 'Error al crear la noticia' })
-		if (!categories) res.status(200).send({ messaje: 'No exist categories' })
-		res.status(200).send({ messaje: 'Ok', categories })
+		else if (!categories) res.status(200).send({ messaje: 'No exist categories' })
+		else res.status(200).send({ messaje: 'Ok', categories })
 	})
 }
 
